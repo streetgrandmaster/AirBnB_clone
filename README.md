@@ -37,6 +37,34 @@ AirBnB clone - The console
 
 <!-- 11. __:__  -->
 
+## Technologies Used
+
+xxx
+
+## Description of the command interpreter:
+
+xxx
+
+### 1. How to start it
+
+xxx
+
+### 2. How to use it
+
+xxx
+
+### 3. Examples
+
+xxx
+
+## Testing
+
+xxx
+
+## Bugs
+
+xxx
+
 ## Authors Info
 
 Name 👨🏽‍💻: __Ray Nyamu__
