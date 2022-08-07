@@ -17,6 +17,7 @@ classes = {"City": City, "Amenity": Amenity, "BaseModel": BaseModel,
 
 
 class HBNBCommand(cmd.Cmd):
+    """Module of a console"""
     prompt = "(hbnb)"
 
     def do_quit(self, args):
