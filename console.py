@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""A class HBNBCommand that contains the entry point of the
+"""A class HBNBcommand that contains the entry point of the
 command interpreter"""
 import cmd
 import models
@@ -16,7 +16,7 @@ classes = {"City": City, "Amenity": Amenity, "BaseModel": BaseModel,
            "State": State, "Place": Place, "Review": Review, "User": User}
 
 
-class HBNBCommand(cmd.Cmd):
+class HBNBcommand(cmd.Cmd):
     """Module of a console"""
     prompt = "(hbnb)"
 
@@ -107,27 +107,81 @@ class HBNBCommand(cmd.Cmd):
         str_list = shlex.split(args)
         if len(str_list) == 0:
             print("** class name missing **")
-            return
         if str_list[0] not in classes:
             print("** class doesn't exist **")
-        if len(str_list) == 1:
+        if len(str_list) < 2:
             print("** instance id missing **")
-            return
+        objects = models.storage.all()
         key = "{}.{}".format(str_list[0], str_list[1])
-        if key in models.storage.all():
-            print(models.storage.all()[key])
-        else:
+        if key not in objects:
             print("** no instance found **")
-            return
-        if (len(str_list) == 2):
+        if len(str_list) < 3:
             print("** attribute name missing **")
-            return
-        if (len(str_list) == 3):
+        if len(str_list) < 4:
             print("** value missing **")
+        try:
+            models.storage.all()[key].__dict__[str_list[2]] = eval(str_list[3])
+        except(Exception):
+            models.storage.all()[key].__dict__[str_list[2]] = str_list[3]
+            models.storage.all()[key].save()
+
+    def count(self, args):
+        """Retrieves the number of instances of a class"""
+        str_list = shlex.split(args)
+        counter = 0
+        if str_list[0] not in classes:
+            print("** class doesn't exist **")
             return
-        setattr(models.storage.all()[key], str_list[2], str_list[3])
-        models.storage.save()
+        else:
+            objects = models.storage.all()
+            for key in objects:
+                name = key.split('.')
+                if name[0] == str_list[0]:
+                    counter += 1
+            print(counter)
+
+    def strip_args(self, args):
+        """Strips the argument and returns a string of command"""
+        my_list = []
+        my_list.append(args[0])
+        try:
+            my_dict = eval(
+                args[1][args[1].find('{'):args[1].find('}')+1])
+        except (Exception):
+            my_dict = None
+        if isinstance(my_dict, dict):
+            my_str = args[1][args[1].find('(')+1:args[1].find(')')]
+            my_list.append(((my_str.split(", "))[0]).strip('"'))
+            my_list.append(my_dict)
+            return my_list
+        my_str = args[1][args[1].find('(')+1:args[1].find(')')]
+        my_list.append(" ".join(my_str.split(", ")))
+        return " ".join(i for i in my_list)
+
+    def default(self, args):
+        """Handles custom format commands"""
+        my_list = args.split('.')
+        if len(my_list) >= 2:
+            if my_list[1] == "all()":
+                self.do_all(my_list[0])
+            elif my_list[1] == "count()":
+                self.count(my_list[0])
+            elif my_list[1][:4] == "show":
+                self.do_show(self.strip_args(my_list))
+            elif my_list[1][:7] == "destroy":
+                self.do_destroy(self.strip_args(my_list))
+            elif my_list[1][:6] == "update":
+                str_list = self.strip_args(my_list)
+                if isinstance(str_list, list):
+                    objects = models.storage.all()
+                    key = "{}.{}".format(str_list[0], args[1])
+                    for k, v in str_list[2].items():
+                        self.do_update(key + ' "{}" "{}"'.format(k, v))
+                else:
+                    self.do_update(str_list)
+        else:
+            cmd.Cmd.default(self, args)
 
 
 if __name__ == '__main__':
-    HBNBCommand().cmdloop()
+    HBNBcommand().cmdloop()
