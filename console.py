@@ -38,51 +38,51 @@ class HBNBcommand(cmd.Cmd):
          JSON file) and prints the id."""
         str_list = shlex.split(args)
         if len(str_list) == 0:
-            print(" class name missing ")
+            print("** class name missing **")
             return
         if str_list[0] in classes:
             new_inst = eval(str_list[0])()
             new_inst.save()
             print(new_inst.id)
         else:
-            print(" class doesn't exist ")
+            print("** class doesn't exist **")
 
     def do_show(self, args):
         """ Prints the string representation of an instance based on the
          class name and id."""
         str_list = shlex.split(args)
         if len(str_list) == 0:
-            print(" class name missing ")
+            print("** class name missing **")
             return
         elif str_list[0] not in classes:
-            print(" class doesn't exist ")
+            print("** class doesn't exist **")
         elif len(str_list) == 1:
-            print(" instance id missing ")
+            print("** instance id missing **")
         else:
             key = "{}.{}".format(str_list[0], str_list[1])
             if key in models.storage.all():
                 print(models.storage.all()[key])
             else:
-                print(" no instance found ")
+                print("** no instance found **")
 
     def do_destroy(self, args):
         """Deletes an instance based on the class name and id (save the
          change into the JSON file). """
         str_list = shlex.split(args)
         if len(str_list) == 0:
-            print(" class name missing ")
+            print("** class name missing **")
             return
         elif str_list[0] not in classes:
-            print(" class doesn't exist ")
+            print("** class doesn't exist **")
         elif len(str_list) == 1:
-            print(" instance id missing ")
+            print("** instance id missing **")
         else:
             key = "{}.{}".format(str_list[0], str_list[1])
             if key in models.storage.all():
                 del models.storage.all()[key]
                 models.storage.save()
             else:
-                print(" no instance found ")
+                print("** no instance found **")
 
     def do_all(self, args):
         """Prints all string representation of all instances based or not
@@ -97,7 +97,7 @@ class HBNBcommand(cmd.Cmd):
                 if str_list[0] in key:
                     my_list.append(str(models.storage.all()[key]))
         else:
-            print(" class doesn't exist ")
+            print("** class doesn't exist **")
             return
         print(my_list)
 
@@ -107,33 +107,33 @@ class HBNBcommand(cmd.Cmd):
         st = models.storage.all()
         str_list = shlex.split(args)
         if len(str_list) == 0:
-            print(" class name missing ")
+            print("** class name missing **")
         elif str_list[0] not in classes:
-            print(" class doesn't exist ")
+            print("** class doesn't exist **")
         elif len(str_list) < 2:
-            print(" instance id missing ")
+            print("** instance id missing **")
         else:
             key = "{}.{}".format(str_list[0], str_list[1])
             if key in st:
                 if len(str_list) < 3:
-                    print(" attribute name missing ")
+                    print("** attribute name missing **")
                 elif len(str_list) < 4:
-                    print(" value missing ")
+                    print("** value missing **")
                 else:
                     try:
-                        st[key].dict[str_list[2]] = eval(str_list[3])
+                        st[key].__dict__[str_list[2]] = eval(str_list[3])
                     except(Exception):
-                        st[key].dict[str_list[2]] = str_list[3]
+                        st[key].__dict__[str_list[2]] = str_list[3]
                         st[key].save()
             else:
-                print(" no instance found ")
+                print("** no instance found **")
 
     def count(self, args):
         """Retrieves the number of instances of a class"""
         str_list = shlex.split(args)
         counter = 0
         if str_list[0] not in classes:
-            print(" class doesn't exist ")
+            print("** class doesn't exist **")
             return
         else:
             objects = models.storage.all()
@@ -186,5 +186,5 @@ class HBNBcommand(cmd.Cmd):
             cmd.Cmd.default(self, args)
 
 
-if name == 'main':
+if __name__ == '__main__':
     HBNBcommand().cmdloop()
